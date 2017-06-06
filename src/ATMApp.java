@@ -45,7 +45,8 @@ public class ATMApp {
 			System.out.println("Account Balance: " + account.getBalance());
 		}
 
-	}
+	}else{
 		System.out.println("Good Bye");
+	}
 	} 
 }
