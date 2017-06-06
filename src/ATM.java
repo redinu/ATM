@@ -1,3 +1,5 @@
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -177,16 +179,21 @@ public class ATM extends Receipt implements iATM{
 	
 	public void printReceipt(Date date, User user,Account account, ATM atm, String transactionType ){
 		
+		
+		DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy"); 
+		
+		
+		
 		if(!balanceCheck){
 			
 		
 		System.out.println("+---------------------------------------------+");
 		System.out.println("|      Chase Bank ATM Receipt                 |");
-		System.out.println("|      Wednesday, December 2, 2015            |");
+		System.out.println("|          " + formatter.format(new Date()) + "                        |");
 		System.out.println("|      ATM Location # 123                     |");
 		System.out.println("|                                             |");
 		System.out.println("|                                             |");
-		System.out.println("|      Account Number:      " + account.getAccountNumber() + "       |");
+		System.out.println("|      Account Number:   " + account.getAccountNumber() + "          |");
 		System.out.println("|      Customer:     " + account.getUser().getFirstName() + " " + account.getUser().getLastName()+ "              |");
 		
 		if(transactionType.equalsIgnoreCase("withdrawal")){
