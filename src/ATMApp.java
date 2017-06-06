@@ -1,3 +1,4 @@
+import java.util.Date;
 import java.util.Scanner;
 
 public class ATMApp {
@@ -22,6 +23,8 @@ public class ATMApp {
 		
 		Account account = atm.getAccount(accNo, pin);
 		
+		if(account!=null){
+		
 		System.out.println("Do you want to withdraw, deposit or check balance?");
 		String entry = scn.nextLine();
 		
@@ -29,17 +32,20 @@ public class ATMApp {
 			transactionType = "withdrawal";
 			System.out.println("Enter the amount you want to withdraw");
 			double amount = scn.nextDouble();
-			atm.withdraw(account.getAccountNumber(), account.getPin(), amount);
+			atm.withdraw(account.getAccountNumber(), account.getPin() , amount);
+			atm.printReceipt(new Date(), atm.user, account, atm, transactionType);
+			
 		}else if( entry.equalsIgnoreCase("deposit")){
 			transactionType = "deposit";
 			System.out.println("Enter the amount you want to deposit");
 			double amount = scn.nextDouble();
 		    atm.deposit(account.getAccountNumber(), account.getPin(), amount);
-		
+		    atm.printReceipt(new Date(), atm.user, account, atm, transactionType);
 		}else{
 			System.out.println("Account Balance: " + account.getBalance());
 		}
 
 	}
-
+		System.out.println("Good Bye");
+	} 
 }

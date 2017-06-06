@@ -7,7 +7,8 @@ public class ATM extends Receipt implements iATM{
 	Account account = new Account();
 	User user = new User();
 	String transactionType;
-	String transactionAmount;
+	Double transactionAmount;
+	boolean balanceCheck = false;
 	
 	
 	
@@ -21,12 +22,12 @@ public class ATM extends Receipt implements iATM{
 	}
 
 
-	public String getTransactionAmount() {
+	public Double getTransactionAmount() {
 		return transactionAmount;
 	}
 
 
-	public void setTransactionAmount(String transactionAmount) {
+	public void setTransactionAmount(Double transactionAmount) {
 		this.transactionAmount = transactionAmount;
 	}
 
@@ -37,7 +38,7 @@ public class ATM extends Receipt implements iATM{
 			if(accountNo == 1000112345 ){
 				if(pin == 1234){
 					
-					
+				
 					user.setFirstName("Rachel");
 					user.setLastName("Green");
 					account.setAccountNumber(1000112345);
@@ -47,14 +48,16 @@ public class ATM extends Receipt implements iATM{
 					
 					
 				}else{
+					int counter = 1;
 					do {
-						int counter = 1;
 						if(counter < 3){
 							System.out.println("You entered wrong PIN.Try Again.");
 							pin = scn.nextInt();
+							counter++;
 
 						} else {
 							System.out.println("Sorry your account is locked.");
+							break;
 						}
 					}while(pin !=1234);
 					
@@ -66,32 +69,33 @@ public class ATM extends Receipt implements iATM{
 						account.setAccountNumber(1000112345);
 						account.setPin(1234);
 						account.setUser(user);
-						account.setBalance(5000);
-						
-						
+						account.setBalance(5000.00);
+					}else{
+						 account = null;
 					}
 				}
 			}else if (accountNo == 1000112346){
 				if(pin == 9089){
-					
+				
 					User user = new User();
 					user.setFirstName("Jack");
 					user.setLastName("Andrew");
 					account.setAccountNumber(1000112346);
 					account.setPin(9089);
 					account.setUser(user);
-					account.setBalance(10000);
+					account.setBalance(10000.00);
 					
 					
 				}else{
+					int counter = 1;
 					do{
-						int counter = 1;
 						if(counter < 3){
 							System.out.println("You entered wrong PIN.Try Again.");
 							pin = scn.nextInt();
-
+							counter++;
 						} else {
 							System.out.println("Sorry your account is locked.");
+							break;
 						}
 					}while(pin !=9089);
 					
@@ -105,7 +109,8 @@ public class ATM extends Receipt implements iATM{
 						account.setUser(user);
 						account.setBalance(10000);
 						
-						
+					}else{
+						account = null;
 					}
 				}
 			}else{
@@ -121,6 +126,7 @@ public class ATM extends Receipt implements iATM{
 	public double deposit( long accountNo,int pin, double amount) {
 		
 		Account account = getAccount(accountNo, pin);
+		transactionAmount = amount;
 		
 	    account.setBalance( account.getBalance() + amount);
 		double newBalance = account.getBalance();
@@ -132,7 +138,7 @@ public class ATM extends Receipt implements iATM{
 	public double withdraw(long accountNo,int pin, double amount) {
 		
 		Account account = getAccount(accountNo, pin);
-		
+		transactionAmount = amount;
 		 
 		if(account.getBalance() > amount){
 			account.setBalance( account.getBalance() - amount);
@@ -155,7 +161,9 @@ public class ATM extends Receipt implements iATM{
 	@Override
 	public double checkBalance(long accountNo,int pin) {
 		
-		account = getAccount(accountNo, pin);
+		balanceCheck = true;
+		
+		Account account = getAccount(accountNo, pin);
 		
 		return account.getBalance();
 	}
@@ -164,27 +172,59 @@ public class ATM extends Receipt implements iATM{
 //	public double showTransaction() {
 //		
 //		
-//		return ;
+//		return getTransactionAmount();
 //	}
 	
-	public void printReceipt(Date date, User user,Account account, ATM atm ){
+	public void printReceipt(Date date, User user,Account account, ATM atm, String transactionType ){
 		
-		System.out.println("+--------------------------------------+");
-		System.out.println("|      Chase Bank ATM Receipt           |");
-		System.out.println("|      Wednesday, December 2, 2015     |");
-		System.out.println("|      ATM Location # 123              |");
-		System.out.println("|                                      |");
-		System.out.println("|                                      |");
-		System.out.println("|      Account Number:      " + account.getAccountNumber() + "    |");
-		System.out.println("|      Customer:     " + account.getUser().getFirstName() + account.getUser().getLastName()+ "     |");
-		System.out.println("|      Transaction Type:    " + atm.getTransactionType() + "    |");
-		System.out.println("|      Transaction Amount:  " + atm.getTransactionAmount()+ "    |");
-		System.out.println("|      Account Balance:   " + atm.checkBalance(account.getAccountNumber(), account.getPin()) + "    |");
-		System.out.println("|                                      |");
-		System.out.println("|      Thank you for banking with us   |");
-		System.out.println("|            Have a coffee day         |");
-		System.out.println("|                                      |");
-		System.out.println("+--------------------------------------+");
+		if(!balanceCheck){
+			
+		
+		System.out.println("+---------------------------------------------+");
+		System.out.println("|      Chase Bank ATM Receipt                 |");
+		System.out.println("|      Wednesday, December 2, 2015            |");
+		System.out.println("|      ATM Location # 123                     |");
+		System.out.println("|                                             |");
+		System.out.println("|                                             |");
+		System.out.println("|      Account Number:      " + account.getAccountNumber() + "       |");
+		System.out.println("|      Customer:     " + account.getUser().getFirstName() + " " + account.getUser().getLastName()+ "              |");
+		
+		if(transactionType.equalsIgnoreCase("withdrawal")){
+			System.out.println("|      Transaction Type:    " + transactionType + "        |");
+		}else{
+			System.out.println("|      Transaction Type:    " + transactionType + "           |");	
+		}
+		System.out.println("|      Transaction Amount:  " + getTransactionAmount()+ "             |");
+		
+		if(transactionType.equalsIgnoreCase("withdrawal")){
+		System.out.println("|      Account Balance:   " + (checkBalance(account.getAccountNumber(), account.getPin())-getTransactionAmount()) + "              |");
+		} else {
+			System.out.println("|      Account Balance:   " + (checkBalance(account.getAccountNumber(), account.getPin())+getTransactionAmount()) + "              |");	
+		}
+		
+		System.out.println("|                                             |");
+		System.out.println("|      Thank you for banking with us          |");
+		System.out.println("|            Have a nice day                  |");
+		System.out.println("|                                             |");
+		System.out.println("+---------------------------------------------+");
+		
+		}else{
+			System.out.println("+--------------------------------------+");
+			System.out.println("|      Chase Bank ATM Receipt          |");
+			System.out.println("|      Wednesday, December 2, 2015     |");
+			System.out.println("|      ATM Location # 123              |");
+			System.out.println("|                                      |");
+			System.out.println("|                                      |");
+			System.out.println("|      Account Number:      " + account.getAccountNumber() + " |");
+			System.out.println("|      Customer:     " + account.getUser().getFirstName() + account.getUser().getLastName()+ "        |");
+			System.out.println("|      Account Balance:   " + checkBalance(account.getAccountNumber(), account.getPin()) + "      |");
+			System.out.println("|                                      |");
+			System.out.println("|      Thank you for banking with us   |");
+			System.out.println("|            Have a nice day           |");
+			System.out.println("|                                      |");
+			System.out.println("+--------------------------------------+");
+		
+		}
 		
 	}
 }
